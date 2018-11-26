@@ -184,4 +184,26 @@
     set status = #{status,jdbcType=INTEGER}
     where username = #{username,jdbcType=VARCHAR}
   </update>
+
+  <resultMap id="BaseResultVoMap" type="com.github.aidan.wechat.account.entity.WechatAccountDo">
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="token" jdbcType="VARCHAR" property="token" />
+  </resultMap>
+  <resultMap extends="BaseResultVoMap" id="ResultVoMapWithBLOBs" type="com.github.aidan.wechat.account.vo.AccountVo">
+    <result column="data" jdbcType="LONGVARCHAR" property="data" />
+  </resultMap>
+
+
+
+
+  <select id="selectByStatus" parameterType="java.lang.String" resultMap="ResultVoMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from wechat_account
+    where status = #{status,jdbcType=INTEGER}
+  </select>
+
 </mapper>

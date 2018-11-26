@@ -2,6 +2,7 @@ package com.github.aidan.wechat.account.dao;
 
 import com.github.aidan.wechat.account.entity.WechatAccountDo;
 
+import com.github.aidan.wechat.account.vo.AccountVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -26,5 +27,7 @@ public interface WechatAccountDoMapper {
     WechatAccountDo selectByUername(@Param(value = "username") String username);
 
     int updateByUsername(WechatAccountDo wechatAccountDo);
+
+    AccountVo selectByStatus(@Param(value = "status") Integer status);
 
 }

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.Date;
 
@@ -101,7 +100,8 @@ public class WechatServiceimpl implements WechatService {
      */
     @Override
     public AccountVo getWechatAccountByStatus(Integer status) {
-        return null;
+
+        return wechatAccountDoMapper.selectByStatus(status);
     }
 
     /**

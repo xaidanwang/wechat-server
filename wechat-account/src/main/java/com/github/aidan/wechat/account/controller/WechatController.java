@@ -41,7 +41,7 @@ public class WechatController {
     @ApiOperation(value = "更新账号信息",httpMethod = "PUT",notes = "更新账号信息")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "账号",name = "uername",required = true,dataType = "string",paramType = "query"),
-            @ApiImplicitParam(value = "状态[1 正常，2 封号，3 解封，4 待定]",name = "status",required = true, dataType = "string",paramType = "query")
+            @ApiImplicitParam(value = "状态[1 正常，2 封号，3 解封，4 待定]",name = "status",required = true, dataType = "int",paramType = "query")
     })
     @RequestMapping(value = "/wechat",method = RequestMethod.PUT)
     public String updateWechatAccount(String uername,Integer status){
@@ -52,11 +52,11 @@ public class WechatController {
 
     @ApiOperation(value = "获取指定状态的账号",httpMethod = "GET",notes = "获取指定状态的账号")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "状态[1 正常，2 封号，3 解封，4 待定]",name = "status",required = true, dataType = "string",paramType = "query")
+            @ApiImplicitParam(value = "状态[1 正常，2 封号，3 解封，4 待定]",name = "status",required = true, dataType = "int",paramType = "query")
     })
     @RequestMapping(value = "/wechat/status",method = RequestMethod.GET)
     public AccountVo getWechatAccountByStatus(Integer status){
-        return wechatService.getWechatAccount();
+        return wechatService.getWechatAccountByStatus(status);
     }
 
 
