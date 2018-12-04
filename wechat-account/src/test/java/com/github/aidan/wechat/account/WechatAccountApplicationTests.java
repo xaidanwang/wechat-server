@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -39,13 +40,17 @@ public class WechatAccountApplicationTests {
 	public void Test(){
 
 		ListOperations listOperations = redisTemplate.opsForList();
-
+		ValueOperations valueOperations =redisTemplate.opsForValue();
 		boolean flag = redisDo.tryLock("lock",1000L);
 		System.out.println(redisTemplate.opsForValue().get("lock"));
 		System.out.println(flag);
 		System.out.println(listOperations.leftPop("test"));
 		System.out.println("Redis List Size :"+listOperations.size("test"));
+		System.out.println(redisDo.remaining);
 
+
+		System.out.println(valueOperations.get("11111111111111111111"));
+		System.out.println(listOperations.leftPop("222222222222222222222222222222"));
 	}
 
 

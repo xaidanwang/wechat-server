@@ -1,5 +1,7 @@
 package com.github.aidan.wechat.account.service.impl;
 
+import clojure.lang.IFn;
+import com.github.aidan.wechat.account.common.RedisDo;
 import com.github.aidan.wechat.account.dao.WechatAccountDoMapper;
 import com.github.aidan.wechat.account.entity.WechatAccountDo;
 import com.github.aidan.wechat.account.service.WechatService;
@@ -26,22 +28,42 @@ public class WechatServiceimpl implements WechatService {
     private WechatAccountDoMapper wechatAccountDoMapper;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    private RedisDo redisDo;
 
+    private static boolean dbFlag = true;
 
     @Override
-    public AccountVo getWechatAccount() {
+    public AccountVo getWechatAccount(String accountKey,boolean init) {
 
-        AccountVo accountVo = new AccountVo();
+        if (!dbFlag){
+            return  redisDo.getAccount(accountKey);
+        }
 
+        if (redisDo.getRedisPoolAccountCount(accountKey)>30){
 
+            return redisDo.getAccount(accountKey);
+        }
 
-        Long id =1L;
+        String lockKey = "lock:account";
+        if (redisDo.tryLock(lockKey,3L)){
 
+            dbFlag = redisDo.pushNewAccount(accountKey);
 
-        wechatAccountDoMapper.selectByPrimaryKey(id);
+            redisDo.releaseLock(lockKey);
+        }else{
 
-        return null;
+            if (!retryTryLock(lockKey)){
+                //手动解锁失败!
+                throw  new RuntimeException("Redis　死锁，手动删除");
+            }
+
+            if (redisDo.tryLock(lockKey,3L)){
+                dbFlag = redisDo.pushNewAccount(accountKey);
+                redisDo.releaseLock(lockKey);
+            }
+        }
+
+        return redisDo.getAccount(accountKey);
     }
 
     @Override
@@ -159,6 +181,13 @@ public class WechatServiceimpl implements WechatService {
         return "删除成功!";
     }
 
+
+    @Override
+    public boolean releaseRedisLock(String accountKey) {
+
+        return redisDo.releaseLock(accountKey);
+    }
+
     /**
      * 删除临时生成的文件
      * @param files
@@ -204,6 +233,31 @@ public class WechatServiceimpl implements WechatService {
         wechatAccountDo.setCreatetime(createTime);
         return wechatAccountDoMapper.insertSelective(wechatAccountDo);
 
+    }
+
+
+
+    public boolean  retryTryLock(String lockKey){
+        boolean lock =false;
+        for (int i = 0;i<8;i++){
+
+            lock = redisDo.tryLock("lock:account",3L);
+            if (lock){
+                break;
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //7 次尝试获取锁失败！手动解锁
+        if (!lock){
+            lock = redisDo.releaseLock("lock:account");
+        }
+        return lock;
     }
 
 }

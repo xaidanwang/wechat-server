@@ -1,5 +1,6 @@
 package com.github.aidan.wechat.account.common;
 
+import clojure.lang.IFn;
 import com.github.aidan.wechat.account.dao.WechatAccountDoMapper;
 import com.github.aidan.wechat.account.util.EmptyUtil;
 import com.github.aidan.wechat.account.vo.AccountVo;
@@ -27,31 +28,43 @@ public class RedisDo {
 
 
     @Value(value = "true")
-    public boolean remaining;
+    public  static boolean remaining;
 
 
-    public boolean accountBuffer(){
+    /**
+     *
+     * @param accountKey
+     * @return true 表示数据库中还有剩余数据没有使用，false 表示数据库中所有数据都已经使用
+     */
+    public boolean pushNewAccount(String accountKey){
 
+             if (getRedisPoolAccountCount(accountKey)>30){
 
-        boolean flag = tryLock("account1",1L);
-        ListOperations<String,AccountVo> listOperations = redisTemplate.opsForList();
-        if (flag){
-            AccountVo accountVo = listOperations.rightPop("account");
-            List<AccountVo> accountVoList = wechatAccountDoMapper.getAccountList(accountVo.getId());
+                 return remaining;
+             }
+
+            ListOperations<String,AccountVo> listOperations = redisTemplate.opsForList();
+
+            AccountVo accountVo = listOperations.rightPop(accountKey);
+
+            List<AccountVo> accountVoList = null;
+            if (EmptyUtil.isEmpty(accountVo)){
+
+                this.remaining = false;
+                return remaining;
+            }else {
+                accountVoList = wechatAccountDoMapper.getAccountList(accountVo.getId());
+            }
 
             if (EmptyUtil.isEmpty(accountVoList)|| accountVoList.size() < 100){
-
                 this.remaining = false;
             }
 
             if (EmptyUtil.isNotEmpty(accountVoList)){
-
-                listOperations.rightPushAll("account",accountVoList);
-
+                listOperations.rightPushAll(accountKey,accountVoList);
             }
-        }
 
-        return flag;
+        return remaining;
     }
 
 
@@ -60,15 +73,15 @@ public class RedisDo {
      * 对于 Redis 集群则无法使用
      *
      * 支持重复，线程安全
-     * @param key
+     * @param lockKey
      * @param timeout
      * @return
      */
-    public Boolean tryLock(String key,Long timeout) {
+    public Boolean tryLock(String lockKey,Long timeout) {
 
         ValueOperations<String,Long> valueOperations = redisTemplate.opsForValue();
 
-        return  valueOperations.setIfAbsent(key,System.currentTimeMillis()+timeout,timeout, TimeUnit.SECONDS);
+        return  valueOperations.setIfAbsent(lockKey,System.currentTimeMillis()+timeout*1000,timeout, TimeUnit.SECONDS);
 
     }
 
@@ -77,10 +90,10 @@ public class RedisDo {
      * 与 tryLock 相对应，用作释放锁
      *
      * @param lockKey
-     * @param clientId
+     *
      * @return
      */
-    public Boolean releaseLock(String lockKey, String clientId) {
+    public Boolean releaseLock(String lockKey) {
 
         if(lockKey == null || "".equals(lockKey)){
             return false;
@@ -95,6 +108,50 @@ public class RedisDo {
            return redisTemplate.delete(lockKey);
         }
         return false;
+    }
+
+    public AccountVo getAccount(String accountKey){
+
+        ListOperations<String,AccountVo> listOperations = redisTemplate.opsForList();
+
+        AccountVo accountVo = listOperations.leftPop(accountKey);
+
+        return accountVo;
+    }
+
+    public void initAccountPool(String accountKey){
+
+        List<AccountVo> accountVoList = wechatAccountDoMapper.getAccountList(1L);
+
+        ListOperations<String,AccountVo> listOperations = redisTemplate.opsForList();
+
+        listOperations.rightPushAll(accountKey,accountVoList);
+
+    }
+
+    public boolean valiateCount(String accountKey){
+
+        ListOperations<String,AccountVo> listOperations = redisTemplate.opsForList();
+
+        AccountVo accountVo = listOperations.rightPop(accountKey);
+
+        List<AccountVo> accountVoList = null;
+
+        if (EmptyUtil.isEmpty(accountVo)){
+
+            accountVoList = wechatAccountDoMapper.getAccountList(1L);
+        }else {
+            accountVoList = wechatAccountDoMapper.getAccountList(accountVo.getId());
+        }
+        return true;
+    }
+
+
+    public Long getRedisPoolAccountCount(String accountKey){
+
+        ListOperations<String,AccountVo> listOperations = redisTemplate.opsForList();
+
+        return listOperations.size(accountKey);
     }
 
 

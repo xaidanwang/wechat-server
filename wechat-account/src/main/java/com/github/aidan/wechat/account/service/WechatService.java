@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface WechatService {
 
-    AccountVo getWechatAccount();
+    AccountVo getWechatAccount(String accountKey,boolean init);
 
     String uploadFile(Integer status,MultipartFile file);
 
@@ -29,4 +29,6 @@ public interface WechatService {
     File download(Integer status, HttpServletRequest request, HttpServletResponse response);
 
     String deleteAccount(Integer status,String username);
+
+    boolean  releaseRedisLock(String accountKey);
 }

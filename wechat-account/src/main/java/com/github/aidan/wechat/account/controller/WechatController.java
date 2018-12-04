@@ -31,9 +31,9 @@ public class WechatController {
 
     @ApiOperation(value = "轮询获取账号信息",httpMethod = "GET",notes = "轮询获取账号信息")
     @RequestMapping(value = "/wechat",method = RequestMethod.GET)
-    public AccountVo getWechatAccount(){
+    public AccountVo getWechatAccount(String accountKey,boolean init){
 
-        return wechatService.getWechatAccount();
+        return wechatService.getWechatAccount(accountKey,init);
 
     }
 
@@ -115,6 +115,13 @@ public class WechatController {
 
         return wechatService.deleteAccount(status,username);
 
+    }
+
+    @ApiOperation(value = "手动释放Redis 锁",httpMethod = "GET",notes = "手动释放Redis 锁")
+    @RequestMapping(value = "/releaseRedisLock",method = RequestMethod.GET)
+    public boolean releaseRedisLock(String accountKey){
+
+        return wechatService.releaseRedisLock(accountKey);
     }
 
 
