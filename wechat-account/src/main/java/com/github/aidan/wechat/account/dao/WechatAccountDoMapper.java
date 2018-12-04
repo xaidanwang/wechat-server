@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface WechatAccountDoMapper {
@@ -28,6 +30,10 @@ public interface WechatAccountDoMapper {
 
     int updateByUsername(WechatAccountDo wechatAccountDo);
 
-    AccountVo selectByStatus(@Param(value = "status") Integer status);
+    List<AccountVo> selectByStatus(@Param(value = "status") Integer status);
+
+    int deleteAccount(@Param(value = "status") Integer status,@Param(value = "username") String username);
+
+    List<AccountVo> getAccountList(@Param(value = "id") Long id);
 
 }

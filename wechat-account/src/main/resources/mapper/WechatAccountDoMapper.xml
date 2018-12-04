@@ -185,7 +185,8 @@
     where username = #{username,jdbcType=VARCHAR}
   </update>
 
-  <resultMap id="BaseResultVoMap" type="com.github.aidan.wechat.account.entity.WechatAccountDo">
+  <resultMap id="BaseResultVoMap" type="com.github.aidan.wechat.account.vo.AccountVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="token" jdbcType="VARCHAR" property="token" />
@@ -197,13 +198,39 @@
 
 
 
-  <select id="selectByStatus" parameterType="java.lang.String" resultMap="ResultVoMapWithBLOBs">
+  <select id="selectByStatus" parameterType="java.lang.Integer" resultMap="ResultVoMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from wechat_account
     where status = #{status,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteAccount" parameterType="java.lang.String">
+    delete from wechat_account
+    where
+    <if test="username != null">
+    username = #{username,jdbcType=VARCHAR}
+  </if>
+
+    <if test="status != null">
+      and status = #{status,jdbcType=INTEGER},
+    </if>
+  </delete>
+
+
+  <select id="getAccountList" parameterType="java.lang.Long" resultMap="ResultVoMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from wechat_account
+    WHERE status = 1
+    <if test="id != null">
+      AND id >= #{id,jdbcType=BIGINT}
+    </if>
+    ORDER BY id LIMIT 0,100;
   </select>
 
 </mapper>

@@ -3,16 +3,21 @@ package com.github.aidan.wechat.account.service.impl;
 import com.github.aidan.wechat.account.dao.WechatAccountDoMapper;
 import com.github.aidan.wechat.account.entity.WechatAccountDo;
 import com.github.aidan.wechat.account.service.WechatService;
+import com.github.aidan.wechat.account.util.CopyUtils;
 import com.github.aidan.wechat.account.util.EmptyUtil;
+import com.github.aidan.wechat.account.util.StreamUtil;
 import com.github.aidan.wechat.account.util.UuidUtils;
 import com.github.aidan.wechat.account.vo.AccountVo;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class WechatServiceimpl implements WechatService {
@@ -20,12 +25,19 @@ public class WechatServiceimpl implements WechatService {
     @Autowired
     private WechatAccountDoMapper wechatAccountDoMapper;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
+
     @Override
     public AccountVo getWechatAccount() {
 
         AccountVo accountVo = new AccountVo();
 
+
+
         Long id =1L;
+
 
         wechatAccountDoMapper.selectByPrimaryKey(id);
 
@@ -33,7 +45,7 @@ public class WechatServiceimpl implements WechatService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(Integer status,MultipartFile file) {
 
         String fileName = file.getOriginalFilename();
 
@@ -56,7 +68,7 @@ public class WechatServiceimpl implements WechatService {
             while ((line=br.readLine())!=null) {
                 arrs=line.split("----");
                 System.out.println(arrs[0] + " : " + arrs[1] + " : " + arrs[2]);
-                saveAccount(arrs);
+                saveAccount(status,arrs);
             }
 
             //删除临时文件
@@ -65,9 +77,9 @@ public class WechatServiceimpl implements WechatService {
             e.printStackTrace();
             return "上传失败!";
         }finally {
-            closeCloseable(fis);
-            closeCloseable(isr);
-            closeCloseable(br);
+            StreamUtil.closeCloseable(fis);
+            StreamUtil.closeCloseable(isr);
+            StreamUtil.closeCloseable(br);
         }
 
         return "上传成功!";
@@ -99,9 +111,52 @@ public class WechatServiceimpl implements WechatService {
      * @return
      */
     @Override
-    public AccountVo getWechatAccountByStatus(Integer status) {
+    public List<AccountVo> getWechatAccountByStatus(Integer status) {
 
         return wechatAccountDoMapper.selectByStatus(status);
+    }
+
+    /**
+     * 下载指定状态账号的信息
+     * @param status
+     * @param request
+     * @param response
+     * @return
+     */
+    @Override
+    public File download(Integer status, HttpServletRequest request, HttpServletResponse response) {
+
+        File file = new File(UuidUtils.getUUID()+".txt");
+        deleteFile(file);
+        BufferedWriter bw =null;
+        try {
+            file.createNewFile();
+            FileWriter fw = new FileWriter(file.getName(),true);
+
+            List<AccountVo> accountVoList =  wechatAccountDoMapper.selectByStatus(status);
+            bw = new BufferedWriter(fw);
+            for (AccountVo accountVo :accountVoList){
+                bw.write(accountVo.printVo());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+           // deleteFile(file);
+            StreamUtil.closeCloseable(bw);
+        }
+        System.out.println(file.getAbsolutePath());
+        System.out.println(file);
+
+        return file;
+    }
+
+
+    @Override
+    public String deleteAccount(Integer status, String username) {
+
+        wechatAccountDoMapper.deleteAccount(status,username);
+
+        return "删除成功!";
     }
 
     /**
@@ -116,40 +171,37 @@ public class WechatServiceimpl implements WechatService {
         }
     }
 
-    private void closeCloseable(Closeable closeable){
 
-        if (closeable != null){
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    private int saveAccount(String[] arrs){
+    private int saveAccount(Integer status,String[] arrs){
         Date createTime = new Date();
         Date updateTime = new Date();
         WechatAccountDo wechatAccountDo = new WechatAccountDo();
         wechatAccountDo.setUsername(arrs[0]);
         wechatAccountDo.setPassword(arrs[1]);
         wechatAccountDo.setData(arrs[2]);
-        wechatAccountDo.setToken(arrs[2]);
-        wechatAccountDo.setIsusable(true);
-        wechatAccountDo.setStatus(1);
-        wechatAccountDo.setCreatetime(createTime);
+        wechatAccountDo.setToken(arrs[3]);
+
+       if (status != 1){
+           wechatAccountDo.setIsusable(false);
+       }else{
+           wechatAccountDo.setIsusable(true);
+       }
+        wechatAccountDo.setStatus(status);
         wechatAccountDo.setUpdateTime(updateTime);
 
         //如果存在该账户更新状态
         WechatAccountDo wechatAccountDo1 =  wechatAccountDoMapper.selectByUername(arrs[0]);
 
         if (EmptyUtil.isNotEmpty(wechatAccountDo1)){
+           // BeanUtils.copyProperties(wechatAccountDo,wechatAccountDo1);
 
-            BeanUtils.copyProperties(wechatAccountDo,wechatAccountDo1);
-
+            CopyUtils.copyProperties(wechatAccountDo,wechatAccountDo1);
             return  wechatAccountDoMapper.updateByPrimaryKey(wechatAccountDo1);
         }
 
+
+        wechatAccountDo.setCreatetime(createTime);
         return wechatAccountDoMapper.insertSelective(wechatAccountDo);
 
     }
