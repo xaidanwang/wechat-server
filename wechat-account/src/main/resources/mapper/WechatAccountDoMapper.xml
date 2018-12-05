@@ -210,13 +210,17 @@
   <delete id="deleteAccount" parameterType="java.lang.String">
     delete from wechat_account
     where
-    <if test="username != null">
-    username = #{username,jdbcType=VARCHAR}
-  </if>
-
-    <if test="status != null">
-      and status = #{status,jdbcType=INTEGER},
-    </if>
+    <choose>
+      <when test="username != null and status != null">
+        username = #{username,jdbcType=VARCHAR} and  status = #{status,jdbcType=INTEGER}
+      </when>
+      <when test="username != null and status == null">
+        username = #{username,jdbcType=VARCHAR}
+      </when>
+      <when test="username == null and status != null">
+        status = #{status,jdbcType=INTEGER}
+      </when>
+    </choose>
   </delete>
 
 
@@ -231,6 +235,21 @@
       AND id >= #{id,jdbcType=BIGINT}
     </if>
     ORDER BY id LIMIT 0,100;
+  </select>
+
+
+  <resultMap id="AccountStockMap" type="com.github.aidan.wechat.account.vo.AccountStock">
+
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <select id="getAccountStock" resultMap="AccountStockMap">
+    SELECT COUNT(1) count,status FROM `wechat_account` GROUP BY status;
+  </select>
+
+  <select id="getAccountTotal" resultType="int">
+     SELECT COUNT(1) total FROM `wechat_account`;
   </select>
 
 </mapper>

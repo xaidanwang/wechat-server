@@ -9,6 +9,8 @@ import com.github.aidan.wechat.account.util.CopyUtils;
 import com.github.aidan.wechat.account.util.EmptyUtil;
 import com.github.aidan.wechat.account.util.StreamUtil;
 import com.github.aidan.wechat.account.util.UuidUtils;
+import com.github.aidan.wechat.account.vo.AccountStock;
+import com.github.aidan.wechat.account.vo.AccountStockVo;
 import com.github.aidan.wechat.account.vo.AccountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WechatServiceimpl implements WechatService {
@@ -30,13 +33,17 @@ public class WechatServiceimpl implements WechatService {
     @Autowired
     private RedisDo redisDo;
 
-    private static boolean dbFlag = true;
+    private static boolean dbFlag = false;
 
     @Override
     public AccountVo getWechatAccount(String accountKey,boolean init) {
 
         if (!dbFlag){
-            return  redisDo.getAccount(accountKey);
+
+            AccountVo accountVo = redisDo.getAccount(accountKey);
+            redisDo.initAccountPool(accountKey);
+            dbFlag = true;
+            return  accountVo;
         }
 
         if (redisDo.getRedisPoolAccountCount(accountKey)>30){
@@ -176,9 +183,9 @@ public class WechatServiceimpl implements WechatService {
     @Override
     public String deleteAccount(Integer status, String username) {
 
-        wechatAccountDoMapper.deleteAccount(status,username);
+         int n = wechatAccountDoMapper.deleteAccount(status,username);
 
-        return "删除成功!";
+        return "删除成功 :"+n+"  个账号";
     }
 
 
@@ -186,6 +193,20 @@ public class WechatServiceimpl implements WechatService {
     public boolean releaseRedisLock(String accountKey) {
 
         return redisDo.releaseLock(accountKey);
+    }
+
+    @Override
+    public AccountStockVo getAccountStock() {
+        AccountStockVo accountStockVo = new AccountStockVo();
+
+        Map<Integer,AccountStock> constantMap = wechatAccountDoMapper.getAccountStock();
+        System.out.println(constantMap);
+        accountStockVo.setTotalCount(wechatAccountDoMapper.getAccountTotal());
+        accountStockVo.setUseableCount(constantMap.get(1).getCount()==null?0:constantMap.get(1).getCount());
+        accountStockVo.setForbiddenCount(constantMap.get(2).getCount()==null?0:constantMap.get(2).getCount());
+        accountStockVo.setReleaseFailCount(constantMap.get(3).getCount()==null?0:constantMap.get(3).getCount());
+
+        return accountStockVo;
     }
 
     /**

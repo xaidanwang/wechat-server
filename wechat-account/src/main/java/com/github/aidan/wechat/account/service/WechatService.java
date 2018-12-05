@@ -1,5 +1,6 @@
 package com.github.aidan.wechat.account.service;
 
+import com.github.aidan.wechat.account.vo.AccountStockVo;
 import com.github.aidan.wechat.account.vo.AccountVo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,4 +32,6 @@ public interface WechatService {
     String deleteAccount(Integer status,String username);
 
     boolean  releaseRedisLock(String accountKey);
+
+    AccountStockVo getAccountStock();
 }

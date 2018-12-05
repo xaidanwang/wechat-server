@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>core-lib</module>
+		<module>wechat-account</module>
 	</modules>
 
 </project>

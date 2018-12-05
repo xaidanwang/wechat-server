@@ -4,6 +4,7 @@ import com.github.aidan.wechat.account.service.WechatService;
 import com.github.aidan.wechat.account.util.EmptyUtil;
 import com.github.aidan.wechat.account.util.FileUtil;
 import com.github.aidan.wechat.account.util.StreamUtil;
+import com.github.aidan.wechat.account.vo.AccountStockVo;
 import com.github.aidan.wechat.account.vo.AccountVo;
 import com.sun.deploy.net.URLEncoder;
 import io.swagger.annotations.Api;
@@ -107,8 +108,8 @@ public class WechatController {
 
     @ApiOperation(value = "删除账号",httpMethod = "DELETE",notes = "删除账号")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "账号",name = "uername",dataType = "string",paramType = "query"),
-            @ApiImplicitParam(value = "状态[1 正常，2 封号，3 解封，4 待定]",name = "status",dataType = "int",paramType = "query")
+            @ApiImplicitParam(value = "账号[该值为空时,即批量删除某类型的账号]",name = "username",dataType = "string",paramType = "query"),
+            @ApiImplicitParam(value = "状态[1 正常，2 封号，3 解封，4 待定][该值为空时,即删除某个的账号],两个都为空值，删除所有账号",name = "status",dataType = "int",paramType = "query")
     })
     @RequestMapping(value = "/wechat",method = RequestMethod.DELETE)
     public String deleteAccount(Integer status,String username){
@@ -124,6 +125,11 @@ public class WechatController {
         return wechatService.releaseRedisLock(accountKey);
     }
 
+    @ApiOperation(value = "查询账号库存信息",httpMethod = "GET",notes = "查询账号库存信息")
+    @RequestMapping(value = "/wechat/stock",method = RequestMethod.GET)
+    public AccountStockVo getAccountStock(){
 
+        return wechatService.getAccountStock();
+    }
 
 }
