@@ -1,6 +1,5 @@
 package com.github.aidan.wechat.account.service.impl;
 
-import clojure.lang.IFn;
 import com.github.aidan.wechat.account.common.RedisDo;
 import com.github.aidan.wechat.account.dao.WechatAccountDoMapper;
 import com.github.aidan.wechat.account.entity.WechatAccountDo;
@@ -13,14 +12,12 @@ import com.github.aidan.wechat.account.vo.AccountStock;
 import com.github.aidan.wechat.account.vo.AccountStockVo;
 import com.github.aidan.wechat.account.vo.AccountVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -125,9 +122,10 @@ public class WechatServiceimpl implements WechatService {
     public String updateWechatAccount(String uername, Integer status) {
 
         WechatAccountDo wechatAccountDo = new WechatAccountDo();
-        wechatAccountDo.setUpdateTime(new Date());
+
         wechatAccountDo.setUsername(uername);
         wechatAccountDo.setStatus(status);
+
         wechatAccountDoMapper.updateByUsername(wechatAccountDo);
 
         return "更新成功!";
@@ -224,36 +222,28 @@ public class WechatServiceimpl implements WechatService {
 
 
     private int saveAccount(Integer status,String[] arrs){
-        Date createTime = new Date();
-        Date updateTime = new Date();
+
         WechatAccountDo wechatAccountDo = new WechatAccountDo();
         wechatAccountDo.setUsername(arrs[0]);
         wechatAccountDo.setPassword(arrs[1]);
         wechatAccountDo.setData(arrs[2]);
         wechatAccountDo.setToken(arrs[3]);
 
-       if (status != 1){
-           wechatAccountDo.setIsusable(false);
-       }else{
+       if (status == 1){
            wechatAccountDo.setIsusable(true);
        }
-        wechatAccountDo.setStatus(status);
-        wechatAccountDo.setUpdateTime(updateTime);
 
+        wechatAccountDo.setStatus(status);
         //如果存在该账户更新状态
         WechatAccountDo wechatAccountDo1 =  wechatAccountDoMapper.selectByUername(arrs[0]);
 
         if (EmptyUtil.isNotEmpty(wechatAccountDo1)){
-           // BeanUtils.copyProperties(wechatAccountDo,wechatAccountDo1);
 
             CopyUtils.copyProperties(wechatAccountDo,wechatAccountDo1);
+
             return  wechatAccountDoMapper.updateByPrimaryKey(wechatAccountDo1);
         }
-
-
-        wechatAccountDo.setCreatetime(createTime);
         return wechatAccountDoMapper.insertSelective(wechatAccountDo);
-
     }
 
 
