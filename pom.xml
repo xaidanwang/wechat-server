@@ -13,6 +13,10 @@
 	<modules>
 		<module>core-lib</module>
 		<module>wechat-account</module>
+		<module>java-8-test</module>
+		<module>swagger-aidan</module>
+		<module>netty-java</module>
+		<module>mybatis-demo</module>
 	</modules>
 
 </project>

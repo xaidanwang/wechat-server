@@ -36,25 +36,36 @@ public class WechatServiceimpl implements WechatService {
     public AccountVo getWechatAccount(String accountKey,boolean init) {
 
         if (!dbFlag){
-
             AccountVo accountVo = redisDo.getAccount(accountKey);
             redisDo.initAccountPool(accountKey);
             dbFlag = true;
             return  accountVo;
         }
 
-        if (redisDo.getRedisPoolAccountCount(accountKey)>30){
+        Long RedisPoolAccountCount = redisDo.getRedisPoolAccountCount(accountKey);
+
+        if (RedisPoolAccountCount >30){
 
             return redisDo.getAccount(accountKey);
         }
 
         String lockKey = "lock:account";
+
+        if (RedisPoolAccountCount >0 && !redisDo.tryLock(lockKey,3L)){
+            return redisDo.getAccount(accountKey);
+        }
+
+
         if (redisDo.tryLock(lockKey,3L)){
 
             dbFlag = redisDo.pushNewAccount(accountKey);
 
             redisDo.releaseLock(lockKey);
-        }else{
+        }else if (RedisPoolAccountCount >0 ){
+
+            return redisDo.getAccount(accountKey);
+
+        }else {
 
             if (!retryTryLock(lockKey)){
                 //手动解锁失败!
