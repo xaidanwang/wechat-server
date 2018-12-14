@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.aidan.mybatis.demo.dao.DispatchingTaskDoMapper">
+  <resultMap id="BaseTaskInfoMap" type="com.github.aidan.mybatis.demo.dto.BaseTaskInfo">
+    <result column="threshold" jdbcType="INTEGER" property="threshold" />
+    <result column="ispopup" jdbcType="BIT" property="ispopup" />
+    <result column="alarmed" jdbcType="INTEGER" property="alarmed" />
+    <result column="quality" jdbcType="LONGVARCHAR" property="quality" typeHandler= "com.github.aidan.mybatis.demo.type.ObjectTypeHandler" javaType="com.github.aidan.mybatis.demo.dto.Quality"/>
+  </resultMap>
+
+  <resultMap id="DispatchingTaskDTOMap" type="com.github.aidan.mybatis.demo.dto.DispatchingTaskDTO" extends="BaseTaskInfoMap">
+
+    <collection property="channelDTOS" ofType="com.github.aidan.mybatis.demo.dto.ChannelDTO">
+      <result column="channeluuid" jdbcType="VARCHAR" property="channeluuid" />
+      <result column="channeltype" jdbcType="VARCHAR" property="channeltype" />
+    </collection>
+    <collection property="faceLibDTOS" ofType="com.github.aidan.mybatis.demo.dto.FaceLibDTO">
+      <result column="libraryuuid" jdbcType="VARCHAR" property="libraryuuid" />
+    </collection>
+
+  </resultMap>
+
+  <select id="getDispatchingTaskDTOList" resultMap="DispatchingTaskDTOMap">
+    SELECT threshold,t.ispopup,t.alarmed,t.quality,tl.libraryuuid,td.channeluuid,td.channeltype FROM
+    (SELECT taskuuid,threshold,ispopup,alarmed,quality FROM t_vss_face_dispatching_task WHERE enabled = TRUE and deleted = FALSE ) t
+      LEFT JOIN t_vss_face_dispatching_library_rl tl ON t.taskuuid = tl.taskuuid
+      LEFT JOIN t_vss_face_dispatching_device_rl td ON t.taskuuid =td.taskuuid
+  </select>
+
+</mapper>

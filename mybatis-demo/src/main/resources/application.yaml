@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.9.170:3306/mppr_face_model?useSSL=false
+      username: root
+      password: 123456
+      initialSize: 8
+      minIdle: 8
+      maxActive: 20
+      timeBetweenEvictionRunsMillis: 150000
+      minEvictableIdleTimeMillis: 300000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+server:
+  port: 9240
+
+mybatis:
+  type-aliases-package: com.github.aidan.mybatis.demo.dto,com.github.aidan.mybatis.demo.entity
+  mapper-locations: classpath:mapper/*.xml
+  type-handlers-package: com.gato.yun.mppr.face.model.service.utils
+  configuration:
+    cache-enabled: true
+    use-generated-keys: true
+    default-executor-type: reuse
+    map-underscore-to-camel-case: true
