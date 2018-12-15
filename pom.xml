@@ -9,7 +9,6 @@
 	<packaging>pom</packaging>
 	<name>aidan-wechat</name>
 
-
 	<modules>
 		<module>core-lib</module>
 		<module>wechat-account</module>
@@ -17,6 +16,7 @@
 		<module>swagger-aidan</module>
 		<module>netty-java</module>
 		<module>mybatis-demo</module>
+		<module>adsl-server</module>
 	</modules>
 
 </project>

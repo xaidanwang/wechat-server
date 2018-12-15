@@ -1,9 +1,10 @@
+
 spring:
   datasource:
       name: dev
-      url: jdbc:mysql://192.168.48.133:3306/wechat?&useSSL=false
+      url: jdbc:mysql://127.0.0.1:3306/wechat?&useSSL=false
       username: root
-      password: 123456
+      password: root
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.cj.jdbc.Driver
       filters: stat
@@ -20,11 +21,8 @@ spring:
       poolPreparedStatements: true
       maxOpenPreparedStatements: 20
       logSlowSql: true
-  redis:
-    host: 192.168.48.133
-    port: 6379
-    password:
-
+server:
+  port: 8085
 mybatis:
     basepackage: com.github.aidan.wechat.account.dao
     xmlLocation: classpath:mapper/**/*.xml
