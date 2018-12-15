@@ -30,7 +30,7 @@ public class IpServiceImpl implements IpService {
         long startTime = System.currentTimeMillis();
         RemoteShellTool tool = new RemoteShellTool("172.247.116.62",20279, "root",
                 "225286", "utf-8");
-        String result1 = tool.exec("ip a | grep ppp0 |grep inet | awk '{print $2}'");
+        String result1 = tool.exec("ip a | grep ppp0 |grep inet | awk '{print $2}'").trim();
         long endTime = System.currentTimeMillis();
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
         System.out.print(result1);
