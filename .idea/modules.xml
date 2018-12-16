@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/adsl-server/adsl-server.iml" filepath="$PROJECT_DIR$/adsl-server/adsl-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core-lib/common/common.iml" filepath="$PROJECT_DIR$/core-lib/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core-lib/core-lib.iml" filepath="$PROJECT_DIR$/core-lib/core-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core-lib/core-lib-service/core-lib-service.iml" filepath="$PROJECT_DIR$/core-lib/core-lib-service/core-lib-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java-8-test/java-8-test.iml" filepath="$PROJECT_DIR$/java-8-test/java-8-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mybatis-demo/mybatis-demo.iml" filepath="$PROJECT_DIR$/mybatis-demo/mybatis-demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wechat-account/wechat-account.iml" filepath="$PROJECT_DIR$/wechat-account/wechat-account.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/wechat-server.iml" filepath="$PROJECT_DIR$/.idea/wechat-server.iml" />
+    </modules>
+  </component>
+</project>
