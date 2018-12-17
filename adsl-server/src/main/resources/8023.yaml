@@ -1,7 +1,5 @@
 
 spring:
-  profiles:
-    include: 8000,8001,8002
   datasource:
       name: dev
       url: jdbc:mysql://47.93.16.97:3306/wechat?&useSSL=false
@@ -24,24 +22,13 @@ spring:
       maxOpenPreparedStatements: 20
       logSlowSql: true
 server:
-  port: 8000
+  port: 8023
 mybatis:
     basepackage: com.github.aidan.wechat.account.dao
     xmlLocation: classpath:mapper/**/*.xml
     mapper-locations: "classpath*:mapper/*.xml"
 adsl:
-  host: 157.52.202.20
-  port: 20460
+  host: 157.52.202.19
+  port: 20302
   pwd: q123456
   user: root
-
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          strategy: "SEMAPHORE"
-          thread:
-            timeoutInMilliseconds: 30000
-        timeout:
-          enabled: false
