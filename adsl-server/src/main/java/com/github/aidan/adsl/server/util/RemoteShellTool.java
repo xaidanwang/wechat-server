@@ -33,7 +33,8 @@ public class RemoteShellTool {
         conn.connect(); // 连接
         long endTime = System.currentTimeMillis();
         System.out.println("创建连接时间：" + (endTime - startTime) + "ms");
-        return conn.authenticateWithPassword(userName, password); // 认证
+        // 认证
+        return conn.authenticateWithPassword(userName, password);
 
 
     }
@@ -44,7 +45,8 @@ public class RemoteShellTool {
         try {
             if (this.login()) {
                 long startTime = System.currentTimeMillis();
-                Session session = conn.openSession(); // 打开一个会话
+                // 打开一个会话
+                Session session = conn.openSession();
                 long endTime = System.currentTimeMillis();
                 System.out.println("创建会话时间：" + (endTime - startTime) + "ms");
 

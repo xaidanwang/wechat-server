@@ -22,7 +22,7 @@ spring:
       maxOpenPreparedStatements: 20
       logSlowSql: true
 server:
-  port: 8100
+  port: 8001
 mybatis:
     basepackage: com.github.aidan.wechat.account.dao
     xmlLocation: classpath:mapper/**/*.xml
