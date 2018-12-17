@@ -79,9 +79,34 @@ public class RemoteShellTool {
     /**
      * @param args
      */
-/*    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
+        RemoteShellTool tool = new RemoteShellTool("157.52.202.19",20302, "root",
+                "q123456", "utf-8");
 
-*//*        long startTime = System.currentTimeMillis();
+        if (tool.login()){
+
+            while (true){
+                InputStreamReader is = new InputStreamReader(System.in);
+                BufferedReader br = new BufferedReader(is);
+                try{ //该方法中有个IOExcepiton需要捕获
+                    Session session = tool.conn.openSession();
+                    String name = br.readLine();
+                    System.out.println("ReadTest Output:" + name);
+                    InputStream in = session.getStdout();
+                    session.execCommand(name);
+                    String result = tool.processStdout(in, tool.charset);
+                    System.out.println(result);
+                    session.close();
+                }finally {
+
+                }
+            }
+        }
+
+
+
+
+/*        long startTime = System.currentTimeMillis();
         RemoteShellTool tool = new RemoteShellTool("172.247.116.221",20359, "root",
                 "rv10m829", "utf-8");
         String result = tool.exec("pppoe-stop && pppoe-start");
@@ -89,38 +114,7 @@ public class RemoteShellTool {
         long endTime = System.currentTimeMillis();
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
         System.out.print(result1);
-        System.out.print(result);*//*
+        System.out.print(result);*/
+    }
 
-
-        //BeyondCompare路径
-        String filePath = "C:\\Users\\Administrator\\AppData\\Roaming\\BeyondCompare\\BeyondCompare419.ini";
-        //创建文件对象
-        File BCFile = new File(filePath);
-        //创建FileReader对象
-        FileReader frBCFile = new FileReader(BCFile);
-        //创建Buffered对象
-        BufferedReader br = new BufferedReader(frBCFile);
-
-        //读取文件内容
-        String line = null;
-        StringBuilder sb = new StringBuilder();
-        while ((line = br.readLine()) != null) {
-            if (line.indexOf("InstallTime") != -1) {
-                //获取当前时间戳，因为获取到的是13位，而文件内是10位，故分割一下字符串
-                String time =String.valueOf(System.currentTimeMillis()).substring(0,9);
-                sb.append("InstallTime="+time+"\r\n");
-            }else {
-                sb.append(line+"\r\n");
-            }
-        }
-
-        //写入文件
-        BufferedWriter bw = new BufferedWriter(new FileWriter(BCFile));
-        bw.write(sb.toString());
-        System.out.println(sb.toString());
-        bw.flush();
-
-        //关闭流
-        frBCFile.close();
-    }*/
 }
