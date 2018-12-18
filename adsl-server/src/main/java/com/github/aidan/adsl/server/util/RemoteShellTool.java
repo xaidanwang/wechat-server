@@ -2,9 +2,11 @@ package com.github.aidan.adsl.server.util;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
+import com.mysql.cj.util.StringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Scanner;
 
 public class RemoteShellTool {
 
@@ -81,9 +83,31 @@ public class RemoteShellTool {
     /**
      * @param args
      */
-/*    public static void main(String[] args) throws IOException {
+   public static void main(String[] args) throws IOException, InterruptedException {
 
-*//*        long startTime = System.currentTimeMillis();
+       RemoteShellTool tool = new RemoteShellTool("157.52.202.19", 20302, "root",
+               "q123456", "utf-8");
+           System.out.println("连接成功");
+           Connection connection = new Connection("157.52.202.19",20302);
+           boolean flag = connection.authenticateWithPassword("root","q123456");
+           if (flag) {
+               while (true) {
+                   Session session = connection.openSession();
+                   InputStream is = System.in;
+                   InputStreamReader isr = new InputStreamReader(is);
+                   BufferedReader br = new BufferedReader(isr);
+                   try {
+                       System.out.println(br.readLine());
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+                   session.execCommand(br.readLine());
+                   System.out.println(tool.processStdout(session.getStderr(), "utf-8"));
+                   System.out.println(tool.processStdout(session.getStdout(), "utf-8"));
+                   session.close();
+               }
+           }
+/*       long startTime = System.currentTimeMillis();
         RemoteShellTool tool = new RemoteShellTool("172.247.116.221",20359, "root",
                 "rv10m829", "utf-8");
         String result = tool.exec("pppoe-stop && pppoe-start");
@@ -91,10 +115,10 @@ public class RemoteShellTool {
         long endTime = System.currentTimeMillis();
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
         System.out.print(result1);
-        System.out.print(result);*//*
+        System.out.print(result);*/
 
 
-        //BeyondCompare路径
+ /*       //BeyondCompare路径
         String filePath = "C:\\Users\\Administrator\\AppData\\Roaming\\BeyondCompare\\BeyondCompare419.ini";
         //创建文件对象
         File BCFile = new File(filePath);
@@ -125,4 +149,5 @@ public class RemoteShellTool {
         //关闭流
         frBCFile.close();
     }*/
+   }
 }
