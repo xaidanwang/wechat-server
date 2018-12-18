@@ -2,7 +2,30 @@
 ### Java template
 # Compiled class file
 *.class
-
+*.classpath
+*.gitignore
+*.hprof
+*.idea
+*.iml
+*.mvn
+*.project
+*.pyc
+*.pyo
+*.rbc
+*.settings
+*.sh
+*.yarb
+*~
+.DS_Store
+.git
+.hg
+.svn
+CVS
+__pycache__
+_svn
+target
+vssver.scc
+vssver2.scc
 # Log file
 *.log
 
@@ -56,6 +79,6 @@ $RECYCLE.BIN/
 *.lnk
 
 .gitignore
-.idea/inspectionProfiles/
+.idea/*
 .idea/workspace.xml
 adsl-server/target/
