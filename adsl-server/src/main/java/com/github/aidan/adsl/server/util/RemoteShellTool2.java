@@ -2,7 +2,7 @@ package com.github.aidan.adsl.server.util;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
-import org.springframework.util.StringUtils;
+import com.mysql.cj.util.StringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -36,7 +36,8 @@ public class RemoteShellTool2 {
         conn.connect(); // 连接
         long endTime = System.currentTimeMillis();
         System.out.println("创建连接时间：" + (endTime - startTime) + "ms");
-        return conn.authenticateWithPassword(userName, password); // 认证
+        // 认证
+        return conn.authenticateWithPassword(userName, password);
 
 
     }
@@ -47,7 +48,8 @@ public class RemoteShellTool2 {
         try {
             if (this.login()) {
                 long startTime = System.currentTimeMillis();
-                Session session = conn.openSession(); // 打开一个会话
+                // 打开一个会话
+                Session session = conn.openSession();
                 long endTime = System.currentTimeMillis();
                 System.out.println("创建会话时间：" + (endTime - startTime) + "ms");
 
@@ -82,71 +84,81 @@ public class RemoteShellTool2 {
     /**
      * @param args
      */
-    public static void main(String[] args) throws IOException, InterruptedException {
-        RemoteShellTool2 tool = new RemoteShellTool2("172.247.116.62",20279, "root",
-                "225286", "utf-8");
-        String result="";
-        FileOutputStream fos=new FileOutputStream(new File("H:\\新建文件夹\\log\\log.txt"));
-        OutputStreamWriter osw=new OutputStreamWriter(fos, "UTF-8");
-        BufferedWriter  bw=new BufferedWriter(osw);
-        String closeppoe="关闭拨号"+"\t\n";
-        String openppoe = "开始拨号"+"\t\n";
-        String ppoeNull = "拨号为空\t\n";
-        String catchIp = "开始获取ip\t\n";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (tool.login()){
-            int i=0;
-            while (true){
-                Thread.sleep(3000);
-                System.out.println("关闭拨号");
-                bw.write(closeppoe);
-                tool.exec1(" /usr/sbin/pppoe-stop");
-                Thread.sleep(5000);
-                System.out.println("开始拨号");
-                bw.write(openppoe);
-                result = tool.exec1("/usr/sbin/pppoe-start");
-                if (!StringUtils.isEmpty(result)){
-                    System.out.println("拨号为空");
-                    bw.write(ppoeNull);
-                    return;
-                }
-                Thread.sleep(10000);
-                System.out.println("开始获取ip");
-                bw.write(catchIp);
-                result = tool.exec1("wget -qO- -t1 -T2 ipinfo.io/ip").trim();
-                if (StringUtils.isEmpty(result)){
-                    Thread.sleep(2000);
-                    System.out.println("ip 为空 查看网卡信息");
-                    bw.write("获取IP 失败 查看 网卡信息 是否又IP信息"+"\t\n");
-                    result = tool.exec1("ip a | grep ppp* |grep inet | awk '{print $2}'").trim();
-                    bw.write(sdf.format(new Date())+"ppp* 网卡获取第 "+i+"次 ip 为"+result+"\t\n");
-                    System.out.println("ppp* 网卡 ip 为"+result);
-                    if (StringUtils.isEmpty(result)){
-                        result = "重新拨号";
-                        System.out.println(result);
-                    }
-                    result = tool.exec1("curl www.baidu.com ").trim();
-                    if (StringUtils.isEmpty(result)){
-                        result = "稍后重试";
-                        System.out.println(result);
-                    }else {
-                        Thread.sleep(2000);
-                        result = tool.exec1("wget -qO- -t1 -T2 ipinfo.io/ip").trim();
-                        bw.write(sdf.format(new Date())+"ppp* 网卡获取IP成功wget 重新获取第 "+i+" 次ip为"+result+"\t\n");
-                        System.out.println(result);
-                    }
-                }
-                System.out.println(result);
-                bw.write(sdf.format(new Date())+"wget 直接获取ip成功第 "+i+"次ip为"+result+"\t\n\r");
-                bw.flush();
-                i++;
-            }
-        }
+   public static void main(String[] args)  {
+       RemoteShellTool2 tool = new RemoteShellTool2("157.52.202.20", 20460, "root",
+               "q123456", "utf-8");
+           System.out.println("连接成功");
+       InputStream in = null;
+       String result = "";
+       FileWriter fw =null;
+       try {
+           fw = new FileWriter(new File("H:\\新建文件夹\\log\\log20548.txt"));
+           if (tool.login()) {
+               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+               int i =0;
+               while (true) {
+                   fw.write("开始第"+i+" 次获取 IP\t\n");
+                   Thread.sleep(5000);
+                   System.out.println("关闭 pppoe");
+                   fw.write("关闭 pppoe\t\n");
+                   result = tool.exec1("/usr/sbin/pppoe-stop");
+                   Thread.sleep(10000);
+                   fw.write("开启 pppoe\t\n");
+                   result = tool.exec1("/usr/sbin/pppoe-start");
 
+                   Thread.sleep(5000);
+                   fw.write("获取ip：\t\n");
+                   result = tool.exec1("wget -qO- -t1 -T2 ipinfo.io/ip").trim();
 
+                   if (StringUtils.isNullOrEmpty(result)){
+                       fw.write("wget 一次获取ip失败,2秒后查看网卡IP :\t\n");
+                       Thread.sleep(2000);
+                       result = tool.exec1("ip a | grep ppp* |grep inet | awk '{print $2}'").trim();
+                       if (StringUtils.isNullOrEmpty(result)){
+                           result = "重新拨号\t\n";
+                           fw.write(result);
+                           fw.flush();
+                           continue;
+                       }else {
+                           result = "看网卡IP为："+result+"2 秒 后 wget 开始重新获取ip\t\n";
+                           Thread.sleep(2000);
+                           fw.write(result);
+                           result = tool.exec1("wget -qO- -t1 -T2 ipinfo.io/ip").trim();
+                           if (StringUtils.isNullOrEmpty(result)){
+                               result = "wget 二次获取ip 失败 重新拨号 休眠1分钟\t\n";
+                               System.out.println(result);
+                               fw.write(result);
+                               Thread.sleep(60000);
+                               continue;
+                           }else {
+                               StringBuilder sb = new StringBuilder(sdf.format(new Date())+"wget开始第"+i+"次获取ip二次成功,ip 为:");
+                               result =  sb.append(result).toString();
+                               fw.write(result+"\t\n");
+                           }
+                       }
+                   }else {
+                       StringBuilder sb = new StringBuilder(sdf.format(new Date())+"wget开始第"+i+"次获取ip一次成功,ip 为:");
+                       result =  sb.append(result).toString();
+                       fw.write(result+"\t\n");
+                   }
+                   System.out.println("result :"+result);
+                   fw.flush();
+                   i++;
+               }
+           }
 
-
-/*        long startTime = System.currentTimeMillis();
+       }catch (Exception e){
+           e.printStackTrace();
+       }finally {
+           try {
+               fw.flush();
+               tool.conn.close();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
+   }
+/*       long startTime = System.currentTimeMillis();
         RemoteShellTool tool = new RemoteShellTool("172.247.116.221",20359, "root",
                 "rv10m829", "utf-8");
         String result = tool.exec("pppoe-stop && pppoe-start");
@@ -155,19 +167,61 @@ public class RemoteShellTool2 {
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
         System.out.print(result1);
         System.out.print(result);*/
+
+
+ /*       //BeyondCompare路径
+        String filePath = "C:\\Users\\Administrator\\AppData\\Roaming\\BeyondCompare\\BeyondCompare419.ini";
+        //创建文件对象
+        File BCFile = new File(filePath);
+        //创建FileReader对象
+        FileReader frBCFile = new FileReader(BCFile);
+        //创建Buffered对象
+        BufferedReader br = new BufferedReader(frBCFile);
+
+        //读取文件内容
+        String line = null;
+        StringBuilder sb = new StringBuilder();
+        while ((line = br.readLine()) != null) {
+            if (line.indexOf("InstallTime") != -1) {
+                //获取当前时间戳，因为获取到的是13位，而文件内是10位，故分割一下字符串
+                String time =String.valueOf(System.currentTimeMillis()).substring(0,9);
+                sb.append("InstallTime="+time+"\r\n");
+            }else {
+                sb.append(line+"\r\n");
+            }
+        }
+
+        //写入文件
+        BufferedWriter bw = new BufferedWriter(new FileWriter(BCFile));
+        bw.write(sb.toString());
+        System.out.println(sb.toString());
+        bw.flush();
+
+        //关闭流
+        frBCFile.close();
+    }*/
+
+
+    public Connection getConn() {
+        return conn;
     }
+
+    public String getCharset() {
+        return charset;
+    }
+
     public String exec1(String cmds) {
         InputStream in = null;
         String result = "";
         try {
-            Session session = conn.openSession(); // 打开一个会话
+            Session session = this.conn.openSession();
             session.execCommand(cmds);
             in = session.getStdout();
             result = this.processStdout(in, this.charset);
             session.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+            } catch (IOException e) {
+            e.printStackTrace();
         }
         return result;
-    }
+   }
 }

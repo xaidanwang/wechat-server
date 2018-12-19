@@ -15,8 +15,9 @@
 		<module>java-8-test</module>
 		<module>mybatis-demo</module>
 		<module>swagger-aidan</module>
-		<module>mybatis-demo</module>
 		<module>adsl-server</module>
+        <module>wechat-websocket</module>
+        <module>netty-java</module>
 	</modules>
 
 </project>

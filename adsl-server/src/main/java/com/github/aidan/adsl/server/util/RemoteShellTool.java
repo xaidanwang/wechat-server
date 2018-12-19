@@ -79,7 +79,7 @@ public class RemoteShellTool {
     /**
      * @param args
      */
-    public static void main(String[] args) throws IOException {
+ /*   public static void main(String[] args) throws IOException {
         RemoteShellTool tool = new RemoteShellTool("157.52.202.19",20302, "root",
                 "q123456", "utf-8");
 
@@ -103,7 +103,7 @@ public class RemoteShellTool {
             }
         }
 
-
+    }*/
 
 
 /*        long startTime = System.currentTimeMillis();
@@ -115,6 +115,6 @@ public class RemoteShellTool {
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
         System.out.print(result1);
         System.out.print(result);*/
-    }
+
 
 }

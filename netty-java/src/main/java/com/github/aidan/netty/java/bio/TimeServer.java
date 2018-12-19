@@ -23,7 +23,7 @@ public class TimeServer {
         ServerSocket server = null;
 
         try {
-            server = new ServerSocket();
+            server = new ServerSocket(port);
 
             System.out.println("Time server is start in port :" + port);
             Socket socket = null;

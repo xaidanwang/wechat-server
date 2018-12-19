@@ -8,42 +8,16 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../core-lib/core-lib-service/pom.xml</relativePath><!-- lookup parent from repository -->
 	</parent>
-
 	<groupId>com.github.aidan</groupId>
-	<artifactId>adsl-server</artifactId>
+	<artifactId>wechat-websocket</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>adsl-server</name>
+	<name>wechat-websocket</name>
 	<description>Demo project for Spring Boot</description>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.mybatis.generator</groupId>
-				<artifactId>mybatis-generator-maven-plugin</artifactId>
-				<version>1.3.7</version>
-				<configuration>
-					<configurationFile>${basedir}/src/main/resources/generator/generatorConfig.xml</configurationFile>
-					<overwrite>true</overwrite>
-					<verbose>true</verbose>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
-		<dependency>
-			<groupId>org.jvnet.hudson</groupId>
-			<artifactId>ganymed-ssh2</artifactId>
-			<version>build210-hudson-1</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.23</version>
-		</dependency>
 	</dependencies>
+
 </project>
