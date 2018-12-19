@@ -8,9 +8,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Scanner;
 
-public class RemoteShellTool {
+public class RemoteShellTool2 {
 
     private Connection conn;
     private String ipAddr;
@@ -19,8 +18,8 @@ public class RemoteShellTool {
     private String password;
     private int port;
 
-    public RemoteShellTool(String ipAddr, int port, String userName, String password,
-                           String charset) {
+    public RemoteShellTool2(String ipAddr, int port, String userName, String password,
+                            String charset) {
         this.ipAddr = ipAddr;
         this.userName = userName;
         this.password = password;
@@ -85,58 +84,78 @@ public class RemoteShellTool {
     /**
      * @param args
      */
-   public static void main(String[] args) throws IOException, InterruptedException {
-       RemoteShellTool tool = new RemoteShellTool("172.247.116.62", 20279, "root",
-               "225286", "utf-8");
+   public static void main(String[] args)  {
+       RemoteShellTool2 tool = new RemoteShellTool2("104.148.95.211", 20548, "root",
+               "q123456", "utf-8");
            System.out.println("连接成功");
        InputStream in = null;
        String result = "";
+       FileWriter fw =null;
+       try {
+           fw = new FileWriter(new File("E:\\新建文件夹\\log\\log20548.txt"));
            if (tool.login()) {
-               Connection connection =tool.conn;
                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                int i =0;
                while (true) {
 /*                   BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                    String cmds=br.readLine();*/
+                   fw.write("开始第"+i+" 次获取 IP\t\n");
                    Thread.sleep(5000);
-                   Session session = connection.openSession();
                    System.out.println("关闭 pppoe");
-                   session.execCommand("/usr/sbin/pppoe-stop ");
-                   session.close();
-
+                   fw.write("关闭 pppoe\t\n");
+                   result = tool.exec1("/usr/sbin/pppoe-stop");
                    Thread.sleep(10000);
-                   session = connection.openSession();
-                   System.out.println("打开 pppoe");
-                   session.execCommand("/usr/sbin/pppoe-start ");
-                   session.close();
+                   fw.write("开启 pppoe\t\n");
+                   result = tool.exec1("/usr/sbin/pppoe-start");
 
-                   Thread.sleep(10000);
-                   session = connection.openSession();
-                   session.execCommand("wget -qO- -t1 -T2 ipinfo.io/ip ");
-                   in = session.getStdout();
-                   result = tool.processStdout(in, tool.charset).trim();
-                   session.close();
+                   Thread.sleep(5000);
+                   fw.write("获取ip：\t\n");
+                   result = tool.exec1("wget -qO- -t1 -T2 ipinfo.io/ip").trim();
+
                    if (StringUtils.isNullOrEmpty(result)){
+                       fw.write("wget 一次获取ip失败,2秒后查看网卡IP :\t\n");
                        Thread.sleep(2000);
-                       session = connection.openSession();
-                       session.execCommand("ip a | grep ppp* |grep inet | awk '{print $2}' ");
-                       in = session.getStdout();
-                       result = tool.processStdout(in, tool.charset).trim();
-                       session.close();
-                       System.out.println(sdf.format(new Date())+"获取第 "+i+"次 ppp* ip 为"+result);
+                       result = tool.exec1("ip a | grep ppp* |grep inet | awk '{print $2}'").trim();
                        if (StringUtils.isNullOrEmpty(result)){
+                           result = "重新拨号\t\n";
+                           fw.write(result);
+                           fw.flush();
+                           continue;
+                       }else {
+                           result = "看网卡IP为："+result+"2 秒 后 wget 开始重新获取ip\t\n";
                            Thread.sleep(2000);
-                           session = connection.openSession();
-                           session.execCommand("wget -qO- -t1 -T2 ipinfo.io/ip ");
-                           in = session.getStdout();
-                           result = tool.processStdout(in, tool.charset).trim();
-                           session.close();
+                           fw.write(result);
+                           result = tool.exec1("wget -qO- -t1 -T2 ipinfo.io/ip").trim();
+                           if (StringUtils.isNullOrEmpty(result)){
+                               result = "wget 二次获取ip 失败 重新拨号\t\n";
+                               fw.write(result);
+                               return;
+                           }else {
+                               StringBuilder sb = new StringBuilder(sdf.format(new Date())+"wget开始第"+i+"次获取ip二次成功,ip 为:");
+                               result =  sb.append(result).toString();
+                               fw.write(result+"\t\n");
+                           }
                        }
+                   }else {
+                       StringBuilder sb = new StringBuilder(sdf.format(new Date())+"wget开始第"+i+"次获取ip一次成功,ip 为:");
+                       result =  sb.append(result).toString();
+                       fw.write(result+"\t\n");
                    }
-                   System.out.println(sdf.format(new Date())+"获取第 "+i+"次 ip 为"+result);
+                   System.out.println("result :"+result);
+                   fw.flush();
                    i++;
                }
            }
+
+       }catch (Exception e){
+           e.printStackTrace();
+       }finally {
+           try {
+               fw.flush();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
 /*       long startTime = System.currentTimeMillis();
         RemoteShellTool tool = new RemoteShellTool("172.247.116.221",20359, "root",
                 "rv10m829", "utf-8");
@@ -189,5 +208,18 @@ public class RemoteShellTool {
         return charset;
     }
 
-
+    public String exec1(String cmds) {
+        InputStream in = null;
+        String result = "";
+        try {
+            Session session = conn.openSession();
+            session.execCommand(cmds);
+            in = session.getStdout();
+            result = this.processStdout(in, this.charset);
+            session.close();
+            } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+   }
 }

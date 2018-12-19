@@ -20,7 +20,6 @@ public class TimeServerHandler implements Runnable {
 
         BufferedReader in = null;
         PrintWriter out = null;
-
         try {
             in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             out = new PrintWriter(this.socket.getOutputStream());
@@ -52,7 +51,6 @@ public class TimeServerHandler implements Runnable {
             }
 
             if (this.socket != null){
-
                 try {
                     this.socket.close();
                 } catch (IOException e1) {

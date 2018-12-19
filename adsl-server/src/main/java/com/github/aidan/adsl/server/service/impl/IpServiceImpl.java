@@ -2,6 +2,7 @@ package com.github.aidan.adsl.server.service.impl;
 
 
 
+import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import com.github.aidan.adsl.server.bean.ADSL;
 import com.github.aidan.adsl.server.service.IpService;
@@ -21,6 +22,10 @@ public class IpServiceImpl implements IpService {
 
     @Autowired
     private ADSL adsl;
+
+    private static  RemoteShellTool tool = new RemoteShellTool("157.52.202.19", 20302, "root",
+            "q123456", "utf-8");
+    private static Connection connection =tool.getConn();
 
     @Override
     public String refreshIp() throws IOException {
@@ -50,6 +55,7 @@ public class IpServiceImpl implements IpService {
             return result1;
         }else {
             log.info("程序执行结束 获取ip 值为： "+result1+"\n 总耗时"+(System.currentTimeMillis()-startTime)/1000+"s");
+            tool.login();
             return result1.trim();
         }
     }

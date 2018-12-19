@@ -1,0 +1,37 @@
+
+spring:
+  profiles:
+    include: 8000,8001,8002,8003,8004,8005,8006,8007,8008,8009,8010,8011,8012,8013,8014,8015,8016,8017,8018,8019,8020,8021,8022,8023,8024
+    active: 8000,8001,8002,8003,8004,8005,8006,8007,8008,8009,8010,8011,8012,8013,8014,8015,8016,8017,8018,8019,8020,8021,8022,8023,8024
+  datasource:
+      name: dev
+      url: jdbc:mysql://47.93.16.97:3306/wechat?&useSSL=false
+      username: root
+      password: root
+      type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      filters: stat
+      maxActive: 20
+      initialSize: 1
+      maxWait: 60000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
+      logSlowSql: true
+server:
+  port: 8090
+mybatis:
+    basepackage: com.github.aidan.wechat.account.dao
+    xmlLocation: classpath:mapper/**/*.xml
+    mapper-locations: "classpath*:mapper/*.xml"
+adsl:
+  host: 104.148.95.211
+  port: 20836
+  pwd: q123456
+  user: root
