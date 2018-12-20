@@ -4,12 +4,15 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import com.mysql.cj.util.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RemoteShellTool2 {
+public class RemoteShellTool4 {
 
     private Connection conn;
     private String ipAddr;
@@ -18,7 +21,7 @@ public class RemoteShellTool2 {
     private String password;
     private int port;
 
-    public RemoteShellTool2(String ipAddr, int port, String userName, String password,
+    public RemoteShellTool4(String ipAddr, int port, String userName, String password,
                             String charset) {
         this.ipAddr = ipAddr;
         this.userName = userName;
@@ -85,18 +88,19 @@ public class RemoteShellTool2 {
      * @param args
      */
    public static void main(String[] args)  {
-       RemoteShellTool2 tool = new RemoteShellTool2("157.52.202.20", 20460, "root",
+       RemoteShellTool4 tool = new RemoteShellTool4("157.52.202.20", 20260, "root",
                "q123456", "utf-8");
            System.out.println("连接成功");
        InputStream in = null;
        String result = "";
        FileWriter fw =null;
        try {
-           fw = new FileWriter(new File("E:\\新建文件夹\\log\\log20548.txt"));
+           fw = new FileWriter(new File("E:\\新建文件夹\\log\\log8011.txt"));
            if (tool.login()) {
                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                int i =0;
                while (true) {
+                   Long startTime=System.currentTimeMillis();
                    fw.write("开始第"+i+" 次获取 IP\t\n");
                    Thread.sleep(5000);
                    System.out.println("关闭 pppoe");
@@ -142,6 +146,8 @@ public class RemoteShellTool2 {
                        fw.write(result+"\t\n");
                    }
                    System.out.println("result :"+result);
+                   System.out.println("获取ip 总耗时 ："+(System.currentTimeMillis()-startTime)/1000+"秒");
+                   fw.write("获取ip 总耗时 ："+(System.currentTimeMillis()-startTime)/1000+"秒");
                    fw.flush();
                    i++;
                }
@@ -210,14 +216,18 @@ public class RemoteShellTool2 {
         return charset;
     }
 
-    public String exec1(String cmds) throws IOException {
+    public String exec1(String cmds) {
         InputStream in = null;
         String result = "";
-        Session session = this.conn.openSession();
-        session.execCommand(cmds);
-        in = session.getStdout();
-        result = this.processStdout(in, this.charset);
-        session.close();
+        try {
+            Session session = this.conn.openSession();
+            session.execCommand(cmds);
+            in = session.getStdout();
+            result = this.processStdout(in, this.charset);
+            session.close();
+            } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
-    }
+   }
 }

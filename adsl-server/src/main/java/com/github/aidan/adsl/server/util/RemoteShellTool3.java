@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RemoteShellTool2 {
+public class RemoteShellTool3 {
 
     private Connection conn;
     private String ipAddr;
@@ -18,7 +18,7 @@ public class RemoteShellTool2 {
     private String password;
     private int port;
 
-    public RemoteShellTool2(String ipAddr, int port, String userName, String password,
+    public RemoteShellTool3(String ipAddr, int port, String userName, String password,
                             String charset) {
         this.ipAddr = ipAddr;
         this.userName = userName;
@@ -85,14 +85,14 @@ public class RemoteShellTool2 {
      * @param args
      */
    public static void main(String[] args)  {
-       RemoteShellTool2 tool = new RemoteShellTool2("157.52.202.20", 20460, "root",
+       RemoteShellTool3 tool = new RemoteShellTool3("157.52.202.19", 20302, "root",
                "q123456", "utf-8");
            System.out.println("连接成功");
        InputStream in = null;
        String result = "";
        FileWriter fw =null;
        try {
-           fw = new FileWriter(new File("E:\\新建文件夹\\log\\log20548.txt"));
+           fw = new FileWriter(new File("E:\\新建文件夹\\log\\log8010.txt"));
            if (tool.login()) {
                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                int i =0;
@@ -218,6 +218,7 @@ public class RemoteShellTool2 {
         in = session.getStdout();
         result = this.processStdout(in, this.charset);
         session.close();
+
         return result;
-    }
+   }
 }

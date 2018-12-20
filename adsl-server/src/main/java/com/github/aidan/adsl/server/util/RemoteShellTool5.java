@@ -4,12 +4,15 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import com.mysql.cj.util.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RemoteShellTool2 {
+public class RemoteShellTool5 {
 
     private Connection conn;
     private String ipAddr;
@@ -18,7 +21,7 @@ public class RemoteShellTool2 {
     private String password;
     private int port;
 
-    public RemoteShellTool2(String ipAddr, int port, String userName, String password,
+    public RemoteShellTool5(String ipAddr, int port, String userName, String password,
                             String charset) {
         this.ipAddr = ipAddr;
         this.userName = userName;
@@ -85,7 +88,7 @@ public class RemoteShellTool2 {
      * @param args
      */
    public static void main(String[] args)  {
-       RemoteShellTool2 tool = new RemoteShellTool2("157.52.202.20", 20460, "root",
+       RemoteShellTool5 tool = new RemoteShellTool5("157.52.202.40", 20460, "root",
                "q123456", "utf-8");
            System.out.println("连接成功");
        InputStream in = null;
@@ -210,14 +213,18 @@ public class RemoteShellTool2 {
         return charset;
     }
 
-    public String exec1(String cmds) throws IOException {
+    public String exec1(String cmds) {
         InputStream in = null;
         String result = "";
-        Session session = this.conn.openSession();
-        session.execCommand(cmds);
-        in = session.getStdout();
-        result = this.processStdout(in, this.charset);
-        session.close();
+        try {
+            Session session = this.conn.openSession();
+            session.execCommand(cmds);
+            in = session.getStdout();
+            result = this.processStdout(in, this.charset);
+            session.close();
+            } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
-    }
+   }
 }
