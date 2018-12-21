@@ -26,7 +26,7 @@ public class SocketServer  {
             } catch (IOException e) {
                 e.printStackTrace();
             }finally {
-
+                System.out.println("startSocket() 异常");
             }
         }
     }

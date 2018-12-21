@@ -11,6 +11,9 @@ public class AdslServerApplication {
 		SpringApplication.run(AdslServerApplication.class, args);
 
 		SocketServer socketServer =new SocketServer(9000);
+	//	SocketServer socketServer =new SocketServer(9001);
+	//	SocketServer socketServer =new SocketServer(9002);
+	//	SocketServer socketServer =new SocketServer(9003);
 		socketServer.startSocket();
 	}
 

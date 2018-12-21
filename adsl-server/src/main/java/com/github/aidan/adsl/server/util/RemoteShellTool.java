@@ -79,11 +79,9 @@ public class RemoteShellTool {
     /**
      * @param args
      */
- /*   public static void main(String[] args) throws IOException {
-        RemoteShellTool tool = new RemoteShellTool("157.52.202.19",20302, "root",
+    public static void main(String[] args) throws IOException {
+        RemoteShellTool tool = new RemoteShellTool("157.52.202.18",20498, "root",
                 "q123456", "utf-8");
-
-        if (tool.login()){
 
             while (true){
                 InputStreamReader is = new InputStreamReader(System.in);
@@ -101,9 +99,9 @@ public class RemoteShellTool {
 
                 }
             }
-        }
 
-    }*/
+
+    }
 
 
 /*        long startTime = System.currentTimeMillis();

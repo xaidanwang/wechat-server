@@ -88,13 +88,20 @@ public class WebSocketImpl {
     public void onMessage(String message, Session session) {
         System.out.println("来自客户端的消息:" + message);
         //群发消息
-        for (WebSocketImpl item : webSocketSet) {
+        synchronized (this.session) {
+            try {
+                this.session.getBasicRemote().sendText(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+/*        for (WebSocketImpl item : webSocketSet) {
             try {
                 item.sendMessage(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     @OnError
