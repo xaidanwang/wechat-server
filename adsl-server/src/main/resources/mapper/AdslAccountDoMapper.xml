@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.aidan.adsl.server.dao.AdslAccountDoMapper">
+  <resultMap id="BaseResultMap" type="com.github.aidan.adsl.server.entity.AdslAccountDo">
+    <id column="accountId" jdbcType="BIGINT" property="accountid" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
+    <result column="port" jdbcType="INTEGER" property="port" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="useable" jdbcType="BIT" property="useable" />
+    <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    accountId, host, port, username, useable, pwd
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from adsl_account
+    where accountId = #{accountid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from adsl_account
+    where accountId = #{accountid,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.github.aidan.adsl.server.entity.AdslAccountDo">
+    insert into adsl_account (accountId, host, port, 
+      username, useable, pwd)
+    values (#{accountid,jdbcType=BIGINT}, #{host,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER},
+      #{username,jdbcType=VARCHAR}, #{useable,jdbcType=BIT}, #{pwd,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.github.aidan.adsl.server.entity.AdslAccountDo">
+    insert into adsl_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="accountid != null">
+        accountId,
+      </if>
+      <if test="host != null">
+        host,
+      </if>
+      <if test="port != null">
+        port,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="useable != null">
+        useable,
+      </if>
+      <if test="pwd != null">
+        pwd,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="accountid != null">
+        #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="host != null">
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null">
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="useable != null">
+        #{useable,jdbcType=BIT},
+      </if>
+      <if test="pwd != null">
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.aidan.adsl.server.entity.AdslAccountDo">
+    update adsl_account
+    <set>
+      <if test="host != null">
+        host = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null">
+        port = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="useable != null">
+        useable = #{useable,jdbcType=BIT},
+      </if>
+      <if test="pwd != null">
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where accountId = #{accountid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.github.aidan.adsl.server.entity.AdslAccountDo">
+    update adsl_account
+    set host = #{host,jdbcType=VARCHAR},
+      port = #{port,jdbcType=INTEGER},
+      username = #{username,jdbcType=VARCHAR},
+      useable = #{useable,jdbcType=BIT},
+      pwd = #{pwd,jdbcType=VARCHAR}
+    where accountId = #{accountid,jdbcType=BIGINT}
+  </update>
+
+  <select id="getOneAdslAccountDo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from adsl_account
+    where useable = TRUE limit 0,1
+  </select>
+
+  <delete id="deleteAdslAccount" parameterType="java.lang.String">
+    delete from adsl_account
+    where host = #{host,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteAll">
+    delete from adsl_account
+  </delete>
+
+  <update id="updateWechatAccount" parameterType="map">
+    update adsl_account
+    set
+    useable = #{useable,jdbcType=BIT}
+    where host = #{host,jdbcType=VARCHAR} and  port = #{port,jdbcType=INTEGER}
+  </update>
+</mapper>

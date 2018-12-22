@@ -21,7 +21,8 @@ public class TimeClient2 {
         BufferedReader in = null;
         PrintWriter out = null;
         try {
-            socket = new Socket("39.104.189.153",9002);
+            //socket = new Socket("39.104.189.153",9002);
+            socket = new Socket("127.0.0.1",9000);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(),true);
             while (true){

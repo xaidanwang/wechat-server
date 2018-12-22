@@ -17,7 +17,7 @@ public class ADSL {
     @Value("${adsl.pwd}")
     private String pwd;
     @Value("${adsl.user}")
-    private String user;
+    private String username;
 
     public ADSL() {
     }

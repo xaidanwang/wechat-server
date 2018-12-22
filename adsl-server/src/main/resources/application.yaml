@@ -27,7 +27,7 @@ spring:
 server:
   port: 8100
 mybatis:
-    basepackage: com.github.aidan.wechat.account.dao
+    basepackage: com.github.aidan.adsl.server.dao
     xmlLocation: classpath:mapper/**/*.xml
     mapper-locations: "classpath*:mapper/*.xml"
 adsl:

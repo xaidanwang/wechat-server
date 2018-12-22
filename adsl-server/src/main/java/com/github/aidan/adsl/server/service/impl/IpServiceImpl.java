@@ -30,7 +30,7 @@ public class IpServiceImpl implements IpService {
     @Override
     public String refreshIp() throws IOException {
         long startTime = System.currentTimeMillis();
-        RemoteShellTool tool = new RemoteShellTool(adsl.getHost(),adsl.getPort(), adsl.getUser(),
+        RemoteShellTool tool = new RemoteShellTool(adsl.getHost(),adsl.getPort(), adsl.getUsername(),
                 adsl.getPwd(), "utf-8");
        String result = tool.exec("/usr/sbin/pppoe-stop && /usr/sbin/pppoe-start");
         long endTime = System.currentTimeMillis();
@@ -41,7 +41,7 @@ public class IpServiceImpl implements IpService {
     @Override
     public String getIp() throws IOException {
         long startTime = System.currentTimeMillis();
-        RemoteShellTool tool = new RemoteShellTool(adsl.getHost(),adsl.getPort(), adsl.getUser(),
+        RemoteShellTool tool = new RemoteShellTool(adsl.getHost(),adsl.getPort(), adsl.getUsername(),
                 adsl.getPwd(), "utf-8");
         String result1 ="123456";
      /*   result1 = tool.exec("ip a | grep ppp* |grep inet | awk '{print $2}'").trim();*/
