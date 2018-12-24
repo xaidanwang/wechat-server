@@ -32,9 +32,9 @@ public class WechatController {
 
     @ApiOperation(value = "轮询获取账号信息",httpMethod = "GET",notes = "轮询获取账号信息")
     @RequestMapping(value = "/wechat",method = RequestMethod.GET)
-    public AccountVo getWechatAccount(String accountKey,boolean init){
+    public AccountVo getWechatAccount(String accountKey){
 
-        return wechatService.getWechatAccount(accountKey,init);
+        return wechatService.getWechatAccount(accountKey);
 
     }
 

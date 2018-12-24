@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface WechatService {
 
-    AccountVo getWechatAccount(String accountKey,boolean init);
+    AccountVo getWechatAccount(String accountKey);
 
     String uploadFile(Integer status,MultipartFile file);
 

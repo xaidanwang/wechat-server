@@ -8,6 +8,7 @@ import java.net.Socket;
 
 public class TimeClient2 {
 
+
     public static void main(String[] args) {
         int port = 9000;
         if (args != null &&  args.length>0){
@@ -22,7 +23,7 @@ public class TimeClient2 {
         PrintWriter out = null;
         try {
             //socket = new Socket("39.104.189.153",9002);
-            socket = new Socket("127.0.0.1",9000);
+            socket = new Socket("127.0.0.1",9005);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(),true);
             while (true){

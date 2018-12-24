@@ -33,7 +33,7 @@ public class WechatServiceimpl implements WechatService {
     private static boolean dbFlag = false;
 
     @Override
-    public AccountVo getWechatAccount(String accountKey,boolean init) {
+    public AccountVo getWechatAccount(String accountKey) {
 
         if (!dbFlag){
             AccountVo accountVo = redisDo.getAccount(accountKey);
