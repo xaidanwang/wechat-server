@@ -22,8 +22,8 @@ public class SocketServer  {
         while (true){
             try {
                 Socket socket = serverSocket.accept();
-             //   new Thread(new MessageHandler(socket)).start();
-                new Thread(new MessageHandler2(socket)).start();
+               new Thread(new MessageHandler(socket)).start();
+             //   new Thread(new MessageHandler2(socket)).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }finally {

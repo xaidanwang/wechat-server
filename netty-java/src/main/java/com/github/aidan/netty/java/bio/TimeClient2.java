@@ -23,17 +23,19 @@ public class TimeClient2 {
         PrintWriter out = null;
         try {
             //socket = new Socket("39.104.189.153",9002);
-            socket = new Socket("127.0.0.1",9005);
+            socket = new Socket("127.0.0.1",8080);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(),true);
-            while (true){
-                InputStreamReader is = new InputStreamReader(System.in);
-                BufferedReader br = new BufferedReader(is);
-                String name = br.readLine();
-                System.out.println("ReadTest Output:" + name);
-                out.println(name);
-                System.out.println("socket服务器返回信息:"+in.readLine());
-            }
+            out.println("QUERY TIME ORDER");
+
+            byte[] by = new byte[1024];
+            socket.getInputStream().read(by);
+            String re = new String(by,"UTF-8");
+            System.out.println("re :"+re);
+
+            System.out.println("Send order 2 server succeed.");
+            String resp = in.readLine();
+            System.out.println("Now is :"+  resp);
         }catch (Exception e){
 
             e.printStackTrace();

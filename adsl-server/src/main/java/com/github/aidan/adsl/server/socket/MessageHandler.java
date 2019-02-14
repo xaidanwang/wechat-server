@@ -17,14 +17,8 @@ public class MessageHandler implements Runnable{
 
     public Socket socket;
 
-        private static RemoteShellTool2 tool = new RemoteShellTool2("157.52.202.20", 20460, "root",
-                "q123456", "utf-8");
-/*    private static RemoteShellTool2 tool = new RemoteShellTool2("104.148.95.211", 20866, "root",
-            "q123456", "utf-8");*/
-/*    private static RemoteShellTool2 tool = new RemoteShellTool2("157.52.202.20", 20402, "root",
-            "q123456", "utf-8");*/
-/*    private static RemoteShellTool2 tool = new RemoteShellTool2("157.52.202.20", 20398, "root",
-            "q123456", "utf-8");*/
+        private static RemoteShellTool2 tool = new RemoteShellTool2("172.247.116.62", 20279, "root",
+                "225286", "utf-8");
     public MessageHandler(Socket socket) {
         this.socket = socket;
     }

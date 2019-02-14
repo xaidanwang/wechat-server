@@ -12,7 +12,7 @@ public class AdslServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AdslServerApplication.class, args);
 
-		SocketServer socketServer =new SocketServer(9005);
+		SocketServer socketServer =new SocketServer(9024);
 	//	SocketServer socketServer =new SocketServer(9001);
 	//	SocketServer socketServer =new SocketServer(9002);
 	//	SocketServer socketServer =new SocketServer(9003);

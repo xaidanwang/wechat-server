@@ -21,17 +21,27 @@ public class TimeClient {
         BufferedReader in = null;
         PrintWriter out = null;
         try {
-            socket = new Socket("39.104.189.153",9005);
-           // socket = new Socket("127.0.0.1",9000);
+            //创建sokcet client 去连接指定的ip 与端口的服务端TimeServer
+           // socket = new Socket("39.104.189.153",9024);
+            socket = new Socket("127.0.0.1",8080);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(),true);
             while (true){
+                //循环监听
                 InputStreamReader is = new InputStreamReader(System.in);
                 BufferedReader br = new BufferedReader(is);
+                //阻塞式函数
                 String name = br.readLine();
                 System.out.println("ReadTest Output:" + name);
-                out.println(name);
-                System.out.println("socket服务器返回信息:"+in.readLine());
+             //   out.println(name);
+                socket.getOutputStream().write(name.getBytes());
+
+                byte[] by = new byte[1024];
+                socket.getInputStream().read(by);
+                String re = new String(by,"UTF-8");
+                System.out.println("re :"+re);
+
+                //System.out.println("socket服务器返回信息:"+in.readLine());
             }
         }catch (Exception e){
 
