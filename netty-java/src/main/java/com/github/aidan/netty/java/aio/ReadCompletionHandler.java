@@ -49,17 +49,19 @@ public class ReadCompletionHandler implements CompletionHandler<Integer,ByteBuff
 
     private void doWriter(String response){
 
+        System.out.println(response);
         if (response != null && response.trim().length() > 0){
 
             byte[]  bytes = response.getBytes();
             ByteBuffer writerBuffer = ByteBuffer.allocate(bytes.length);
             writerBuffer.put(bytes);
+            writerBuffer.flip();
             channel.write(writerBuffer, writerBuffer, new CompletionHandler<Integer, ByteBuffer>() {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     //如果没法发送完成,继续发送
-                    if (writerBuffer.hasRemaining()){
-                        channel.write(writerBuffer,writerBuffer,this);
+                    if (attachment.hasRemaining()){
+                        channel.write(attachment,attachment,this);
                     }
                 }
 

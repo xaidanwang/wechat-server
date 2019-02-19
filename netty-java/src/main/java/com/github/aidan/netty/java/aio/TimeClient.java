@@ -2,13 +2,11 @@ package com.github.aidan.netty.java.aio;
 
 /**
  * @author wang yi fei
- * @date 2019/2/14 14:03
+ * @date 2019/2/14 15:48
  */
-public class TimeServer {
-
+public class TimeClient {
 
     public static void main(String[] args) {
-
         int port = 8081;
         if (args != null && args.length>0){
 
@@ -17,8 +15,6 @@ public class TimeServer {
             }catch (NumberFormatException n){
             }
         }
-        AsyncTimeServerHandler asyncTimeServerHandler = new AsyncTimeServerHandler(port);
-
-        new Thread(asyncTimeServerHandler,"AIO-AsyncTimeServerHandler--001").start();
+        new Thread(new AsyncTimeClientHandler("127.0.0.1",port)).start();
     }
 }

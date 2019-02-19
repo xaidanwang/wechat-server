@@ -33,9 +33,9 @@ public class TimeClient {
                 //阻塞式函数
                 String name = br.readLine();
                 System.out.println("ReadTest Output:" + name);
-             //   out.println(name);
-                socket.getOutputStream().write(name.getBytes());
-
+                out.println(name);
+                // socket.getOutputStream().write(name.getBytes());
+                out.write("11111111111111111111111111111111");
                 byte[] by = new byte[1024];
                 socket.getInputStream().read(by);
                 String re = new String(by,"UTF-8");
