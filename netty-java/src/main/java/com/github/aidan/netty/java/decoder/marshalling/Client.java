@@ -35,7 +35,6 @@ public class Client {
                                      //设置Marshalling的编码和解码
                                      ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                                      ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
-
                                      ch.pipeline().addLast(new ClientHandler());
                                  }
                              }

@@ -83,8 +83,45 @@
 			<artifactId>jboss-marshalling</artifactId>
 			<version>${jboss.marshalling.version}</version>
 		</dependency>
-	</dependencies>
 
+		<!-- JIBX  实体类与Xml 数据格式转换工具-->
+		<dependency>
+			<groupId>org.jibx</groupId>
+			<artifactId>jibx-bind</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jibx</groupId>
+			<artifactId>jibx-run</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jibx</groupId>
+			<artifactId>jibx-extras</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jibx</groupId>
+			<artifactId>jibx-schema</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jibx</groupId>
+			<artifactId>jibx-tools</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.22.Final</version>
+        </dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec</artifactId>
+			<version>4.1.22.Final</version>
+		</dependency>
+	</dependencies>
+	<!-- JIBX  实体类与Xml 数据格式转换工具-->
 	<build>
 		<plugins>
 			<plugin>
@@ -119,6 +156,4 @@
 			</extension>
 		</extensions>
 	</build>
-
-
 </project>
