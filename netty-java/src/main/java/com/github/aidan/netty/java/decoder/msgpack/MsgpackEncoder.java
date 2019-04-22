@@ -1,6 +1,7 @@
 package com.github.aidan.netty.java.decoder.msgpack;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.msgpack.MessagePack;

@@ -5,6 +5,7 @@ import com.github.aidan.netty.java.netty.pojo.MessageType;
 import com.github.aidan.netty.java.netty.pojo.NettyMessage;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author wang yi fei
  * @date 2019/2/25 16:04
  */
+@Slf4j
 public class LoginAuthRespHandler extends ChannelHandlerAdapter {
     private Map<String,Boolean> nodeCheck =  new ConcurrentHashMap<>();
     private String[] whiteList = {"127.0.0.1","192.168.1.104"};
@@ -22,8 +24,10 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         NettyMessage message=(NettyMessage)msg;
         //如果是握手请求，处理，其他消息透传
+        log.info("处理握手请求");
         if (message.getHeader()!=null && message.getHeader().getType() == MessageType.LOGIN_REQ.value()){
             String nodeIndex = ctx.channel().remoteAddress().toString();
+            log.info("nodeIndex.toString :"+nodeIndex);
             NettyMessage loginResp = null;
             //重复登陆拒绝
             if (nodeCheck.containsKey(nodeIndex)){
@@ -31,6 +35,7 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
             }else {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
                 String ip = address.getAddress().getHostAddress();
+                log.info("登陆ip 地址为 ip：[{}]",ip);
                 boolean isOk = false;
                 for (String wip:whiteList){
                     if (wip.equals(ip)){
@@ -53,7 +58,7 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
     private NettyMessage buildResponse(byte result){
         NettyMessage message = new NettyMessage();
         Header header = new Header();
-        header.setType(MessageType.LOGIN_RESP.value());
+        header.setType((byte)4);
         message.setHeader(header);
         message.setBody(result);
         return message;
@@ -66,4 +71,6 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
         ctx.close();
         ctx.fireExceptionCaught(cause);
     }
+
+
 }

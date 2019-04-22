@@ -3,6 +3,7 @@ package com.github.aidan.netty.java.netty.client;
 import com.github.aidan.netty.java.netty.codec.NettyMessageDecoder;
 import com.github.aidan.netty.java.netty.codec.NettyMessageEncoder;
 import com.github.aidan.netty.java.netty.pojo.NettyConstant;
+import com.github.aidan.netty.java.netty2.pojo.NettyConstants;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -22,46 +23,42 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
 
-    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    EventLoopGroup group = new NioEventLoopGroup();
 
+    public void connect(int port, String host) {
 
-
-    public void connect(int port,String host) throws InterruptedException {
-
-        EventLoopGroup group = new NioEventLoopGroup();
+        //client NIO thread
         try {
-
             Bootstrap b = new Bootstrap();
             b.group(group).channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY,true)
+                    .option(ChannelOption.TCP_NODELAY, true)
                     .handler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                protected void initChannel(SocketChannel ch) throws Exception {
-                    ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new NettyMessageDecoder(1024*1024,4,4));
-                    pipeline.addLast("MessageEncoder",new NettyMessageEncoder());
-                    pipeline.addLast("readTimeoutHandler",new ReadTimeoutHandler(50));
-                    pipeline.addLast("LoginAuthHandler",new LoginAuthReqHandler());
-                    pipeline.addLast("HeartBeatHandler",new HeartBeatReqHandler());
-                }
-            });
-            //发起异步连接操作
-            ChannelFuture future = b.connect(new InetSocketAddress(host,port),new InetSocketAddress(NettyConstant.LOCALIP,NettyConstant.LOCAL_PORT)).sync();
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4, -8, 0));
+                            ch.pipeline().addLast(new NettyMessageEncoder());
+                            ch.pipeline().addLast(new ReadTimeoutHandler(50));
+                            ch.pipeline().addLast(new LoginAuthReqHandler());
+                            ch.pipeline().addLast(new HeartBeatReqHandler());
+                        }
+                    });
 
-        }finally {
-            //释放所有资源完成之后,清空资源，再次发起重连操作
-            executor.execute(new Runnable() {
+            //异步连接
+            ChannelFuture future = b.connect(new InetSocketAddress(host, port)).sync();
+            System.out.println("client: connect to server host:" + host + ", port:" + port);
+            future.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            //释放资源，重连
+            executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         TimeUnit.SECONDS.sleep(5);
-
-                        try {
-                            //发起重连操作
-                            connect(NettyConstant.PORT,NettyConstant.REMOTEIP);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
+                        //重连
+                        connect(NettyConstants.REMOTE_PORT, NettyConstants.REMOTE_IP);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -71,8 +68,9 @@ public class NettyClient {
 
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        new NettyClient().connect(NettyConstant.PORT,NettyConstant.REMOTEIP);
+
+    public static void main(String[] args) {
+        new NettyClient().connect(NettyConstants.LOCAL_PORT, NettyConstants.REMOTE_IP);
     }
 
 }

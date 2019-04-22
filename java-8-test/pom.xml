@@ -16,5 +16,13 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../core-lib/core-lib-service/pom.xml</relativePath><!-- lookup parent from repository -->
 	</parent>
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+	</dependencies>
 
 </project>

@@ -99,7 +99,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         //RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair.fromSerializer(serializer);
         //RedisCacheConfiguration defaultCacheConfig=RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(pair);
 
-        defaultCacheConfig = defaultCacheConfig.entryTtl(Duration.ofSeconds(100));//设置过期时间
+        defaultCacheConfig = defaultCacheConfig.entryTtl(Duration.ofDays(100));//设置过期时间
 //        //设置默认超过期时间是30秒
 //        defaultCacheConfig.entryTtl(Duration.ofSeconds(30));
 

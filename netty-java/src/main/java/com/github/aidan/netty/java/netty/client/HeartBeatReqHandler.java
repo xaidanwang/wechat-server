@@ -5,6 +5,7 @@ import com.github.aidan.netty.java.netty.pojo.MessageType;
 import com.github.aidan.netty.java.netty.pojo.NettyMessage;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -15,9 +16,9 @@ import java.util.concurrent.TimeUnit;
  * @author wang yi fei
  * @date 2019/2/25 18:06
  */
+@Slf4j
 public class HeartBeatReqHandler extends ChannelHandlerAdapter {
     private volatile ScheduledFuture<?> heartBeat;
-    private static final Log LOG = LogFactory.getLog(HeartBeatReqHandler.class);
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         NettyMessage message = (NettyMessage) msg;
@@ -31,7 +32,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
         } else if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.HEARTBEAT_RESP
                 .value()) {
-            LOG.info("Client receive server heart beat message : ---> "
+            log.info("Client receive server heart beat message : ---> "
                     + message);
         } else{
             ctx.fireChannelRead(msg);
@@ -39,7 +40,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
     }
 
     private class HeartBeatTask implements Runnable {
-        private final ChannelHandlerContext ctx;
+        private  ChannelHandlerContext ctx;
 
         public HeartBeatTask(final ChannelHandlerContext ctx) {
             this.ctx = ctx;
@@ -48,7 +49,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
         @Override
         public void run() {
             NettyMessage heatBeat = buildHeatBeat();
-            LOG.info("Client send heart beat messsage to server : ---> "
+            log.info("Client send heart beat messsage to server : ---> "
                     + heatBeat);
             ctx.writeAndFlush(heatBeat);
         }
@@ -58,6 +59,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
             Header header = new Header();
             header.setType(MessageType.HEARTBEAT_REQ.value());
             message.setHeader(header);
+            message.setBody((byte) 0);
             return message;
         }
     }

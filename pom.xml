@@ -18,6 +18,7 @@
 		<module>adsl-server</module>
         <module>wechat-websocket</module>
         <module>netty-java</module>
+		<module>gar-demo</module>
 	</modules>
 
 </project>

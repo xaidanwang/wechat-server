@@ -2,6 +2,7 @@ package com.github.aidan.netty.java.netty.pojo;
 
 import sun.rmi.runtime.Log;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,13 +10,13 @@ import java.util.Map;
  * @author wang yi fei
  * @date 2019/2/23 18:26
  */
-public class Header {
-
+public class Header implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int crcCode = 0xabef0101;
     //消息长度
     private int length;
     //回话ID
-    private Long sessionID;
+    private long sessionID;
     //消息类型
     private byte type;
     private byte priority;
