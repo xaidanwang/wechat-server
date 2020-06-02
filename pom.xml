@@ -19,6 +19,7 @@
         <module>wechat-websocket</module>
         <module>netty-java</module>
 		<module>gar-demo</module>
+		<module>java-design-study</module>
 	</modules>
 
 </project>

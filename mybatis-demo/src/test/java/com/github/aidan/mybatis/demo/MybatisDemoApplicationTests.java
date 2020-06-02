@@ -2,6 +2,7 @@ package com.github.aidan.mybatis.demo;
 
 import com.github.aidan.mybatis.demo.dao.DispatchingTaskDoMapper;
 import com.github.aidan.mybatis.demo.dto.DispatchingTaskDTO;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

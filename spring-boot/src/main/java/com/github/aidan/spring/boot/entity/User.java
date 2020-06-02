@@ -1,11 +1,16 @@
 package com.github.aidan.spring.boot.entity;
 
+import lombok.*;
+
 import java.util.Map;
 
 /**
  * @author wang yi fei
  * @date 2019/3/27 13:07
  */
+@Setter
+@Getter
+@NoArgsConstructor
 public class User {
 
     private String name;
@@ -43,5 +48,18 @@ public class User {
 
     public void setStudentMap(Map<String, Student> studentMap) {
         this.studentMap = studentMap;
+    }
+
+    @Override
+    public String toString() {
+        return "{\"User\":{"
+                + "\"name\":\""
+                + name + '\"'
+                + ",\"age\":"
+                + age
+                + ",\"studentMap\":"
+                + studentMap
+                + "}}";
+
     }
 }
